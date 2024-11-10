@@ -1,0 +1,160 @@
+import java.io.*;
+import java.util.Scanner;
+
+public class GaussSeidel {
+public static void main(String[] args) {
+// Чтение данных из файла
+double[][] A = new double[3][3];
+double[] b = new double[3];
+double[] x = new double[3];
+
+try (Scanner scanner = new Scanner(new File("input.txt"))) {
+for (int i = 0; i < 3; i++) {
+for (int j = 0; j < 3; j++) {
+A[i][j] = scanner.nextDouble();
+}
+}
+for (int i = 0; i < 3; i++) {
+b[i] = scanner.nextDouble();
+}
+for (int i = 0; i < 3; i++) {
+x[i] = scanner.nextDouble();
+}
+} catch (FileNotFoundException e) {
+e.printStackTrace();
+return;
+}
+
+// Точность и максимальное количество итераций
+double epsilon = 0.0001;
+int maxIterations = 100;
+
+// Метод Зейделя
+double[] result = gaussSeidel(A, b, x, epsilon, maxIterations);
+
+// Запись результатов в файл
+try (PrintWriter writer = new PrintWriter(new FileWriter("output.txt"))) {
+if (result != null) {
+writer.println("Решение достигнуто:");
+for (int i = 0; i < 3; i++) {
+writer.println("x[" + i + "] = " + result[i]);
+}
+} else {
+writer.println("Решение не достигнуто за " + maxIterations + " итераций.");
+}
+} catch (IOException e) {
+e.printStackTrace();
+}
+}
+
+public static double[] gaussSeidel(double[][] A, double[] b, double[] x, double epsilon, int maxIterations) {
+int n = A.length;
+double[] xNew = new double[n];
+
+for (int iteration = 0; iteration < maxIterations; iteration++) {
+for (int i = 0; i < n; i++) {
+double sum = 0;
+for (int j = 0; j < n; j++) {
+if (i != j) {
+sum += A[i][j] * x[j];
+}
+}
+xNew[i] = (b[i] - sum) / A[i][i];
+}
+
+// Проверка на сходимость
+boolean converged = true;
+for (int i = 0; i < n; i++) {
+if (Math.abs(xNew[i] - x[i]) > epsilon) {
+converged = false;
+}
+x[i] = xNew[i];
+}
+
+if (converged) {
+return x;
+}
+}
+
+return null;
+}
+}
+
+
+
+
+1. Чтение данных из файла
+double[][] A = new double[3][3];
+double[] b = new double[3];
+double[] x = new double[3];
+
+try (Scanner scanner = new Scanner(new File("input.txt"))) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            A[i][j] = scanner.nextDouble();
+        }
+    }
+    for (int i = 0; i < 3; i++) {
+        b[i] = scanner.nextDouble();
+    }
+    for (int i = 0; i < 3; i++) {
+        x[i] = scanner.nextDouble();
+    }
+} catch (FileNotFoundException e) {
+    e.printStackTrace();
+    return;
+}
+
+•	Матрица AA: 3x3 матрица коэффициентов.
+•	Вектор bb: Вектор правых частей.
+•	Вектор xx: Начальное приближение решения.
+2. Метод Гаусса-Зейделя
+public static double[] gaussSeidel(double[][] A, double[] b, double[] x, double epsilon, int maxIterations) {
+    int n = A.length;
+    double[] xNew = new double[n];
+
+    for (int iteration = 0; iteration < maxIterations; iteration++) {
+        for (int i = 0; i < n; i++) {
+            double sum = 0;
+            for (int j = 0; j < n; j++) {
+                if (i != j) {
+                    sum += A[i][j] * x[j];
+                }
+            }
+            xNew[i] = (b[i] - sum) / A[i][i];
+        }
+
+        // Проверка на сходимость
+        boolean converged = true;
+        for (int i = 0; i < n; i++) {
+            if (Math.abs(xNew[i] - x[i]) > epsilon) {
+                converged = false;
+            }
+            x[i] = xNew[i];
+        }
+
+        if (converged) {
+            return x;
+        }
+    }
+
+    return null;
+}
+
+•	Параметры метода:
+•	A: Матрица коэффициентов.
+•	b: Вектор правых частей.
+•	x: Начальное приближение решения.
+•	epsilon: Точность, с которой требуется найти решение.
+•	maxIterations: Максимальное количество итераций.
+
+Для каждой итерации:
+•	Обновляем значения x по формуле:
+
+ 
+
+3. Запись результатов в файл
+•	Если решение найдено, записываем его в файл output.txt.
+•	Если решение не найдено за заданное количество итераций, записываем сообщение об этом.
+
+
